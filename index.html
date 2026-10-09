@@ -22,7 +22,7 @@
 <meta name="description" content="Kewen (Astrid) Peng is a PhD student in human-centered computing at the University of Utah, working on XR, multimodal interaction, and AI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;0,6..96,700&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;0,6..96,700;0,6..96,800&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   /* ── Colors. Change the look here. ───────────────── */
   :root[data-theme="dark"] {
@@ -65,6 +65,7 @@
   a:hover { color: var(--accent); text-decoration-color: var(--accent); }
   a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+  main, .rail { min-width: 0; }
   .page {
     max-width: 1120px;
     margin: 0 auto;
@@ -81,7 +82,8 @@
   .rail .role { color: var(--muted); font-size: 0.9375rem; margin: 0; }
   .rail ul { list-style: none; margin: 0; padding: 0; }
   .contact { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 18px !important; font-size: 0.9375rem; }
-  .toc { margin-top: 36px !important; padding-top: 24px !important; border-top: 1px solid var(--line); font-size: 0.9375rem; }
+  .toc-label { margin: 36px 0 0; padding-top: 24px; border-top: 1px solid var(--line); font-size: 0.75rem; color: var(--muted); letter-spacing: 0.02em; }
+  .toc { margin-top: 10px !important; font-size: 0.9375rem; }
   .toc li { margin: 0 0 8px; }
   .toc a { text-decoration: none; color: var(--muted); }
   .toc a:hover { color: var(--accent); }
@@ -226,7 +228,88 @@
   #player iframe { width: min(1000px, 100%); aspect-ratio: 16 / 9; border: 0; background: #000; border-radius: 12px; }
   #player button { position: absolute; top: 18px; right: 22px; width: 40px; height: 40px; border: 1px solid #555; border-radius: 50%; background: none; color: #fff; font-size: 1.125rem; cursor: pointer; }
   #player button:hover { border-color: #fff; }
-  .earlier { margin-top: 10px; }
+  /* ── News, laid out like a newspaper front page ──── */
+  .masthead { padding-bottom: 10px; margin-bottom: 26px; }   /* no fixed rule: the line only draws itself when the section scrolls in */
+  .masthead h2 { margin-bottom: 0; }
+  /* In News the heading has no underline of its own; instead the masthead's bottom rule lights up when the section scrolls in */
+  .masthead h2::after, .masthead h2::before { display: none; }
+  .masthead { position: relative; }
+  .masthead::after, .masthead::before { content: ""; position: absolute; bottom: -1px; opacity: 0; pointer-events: none; background: var(--text); }
+  .masthead::after { left: 0; right: 0; height: 1px; transform-origin: left center; box-shadow: 0 0 6px 0 var(--halo); }
+  .masthead::before { right: 0; bottom: -3.5px; width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 6px 1px var(--halo), 0 0 16px 4px var(--halo); }
+  .masthead.drawn::after { animation: draw-line 1.9s ease-out forwards; }
+  .masthead.drawn::before { animation: draw-dot 1.9s ease-out forwards; }
+  @media (prefers-reduced-motion: reduce) { .masthead.drawn::after, .masthead.drawn::before { animation: none; } }
+  /* …and a thin band of light sweeps across each headline from left to right, like a reflection passing over glass */
+  :root[data-theme="dark"] { --shine: #fff; --shade: #A9A49E; }   /* on light text the band needs a slightly dimmer edge to read */
+  :root[data-theme="light"] { --shine: color-mix(in srgb, var(--text) 45%, #fff); --shade: var(--text); }
+  #news.lit .head {
+    background-image: linear-gradient(105deg, var(--text) 40%, var(--shade) 46.5%, var(--shine) 50%, var(--shade) 53.5%, var(--text) 60%);
+    background-color: var(--text);   /* wherever the band is not, the letters keep their normal colour */
+    background-size: 250% 100%; background-repeat: no-repeat; background-position: 130% 0;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: head-shine 2s ease-in-out both;
+  }
+  #news.lit .lead .head { animation-delay: .1s; }
+  #news.lit .col:nth-child(1) .head { animation-delay: .35s; }
+  #news.lit .col:nth-child(2) .head { animation-delay: .5s; }
+  #news.lit .stack article:nth-child(2) .head { animation-delay: .45s; }
+  @keyframes head-shine { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+  @media (prefers-reduced-motion: reduce) { #news.lit .head { animation: none; background: none; color: var(--text); } }
+  @media (forced-colors: active) { #news.lit .head { background: none; color: CanvasText; animation: none; } }
+  .tag { display: inline-block; vertical-align: middle; margin-left: 10px; padding: 1px 8px 2px; border: 1px solid var(--date); border-radius: 10px; color: var(--date); font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; line-height: 1.4; letter-spacing: 0; position: relative; top: -0.35em; }
+  .lead { display: flow-root; }
+  .lead .pic-wrap { float: right; width: 58%; margin: 0 0 2px 36px; }
+  .lead .pic { display: block; overflow: hidden; border-radius: 16px; }
+  .lead .pic img { width: 100%; height: auto; display: block; transition: transform .4s ease; }   /* shown whole, at its own proportions */
+  .lead .pic:hover img { transform: scale(1.03); }
+  .story-logo, .columns .story-logo { display: block; height: 30px; width: auto; aspect-ratio: auto; object-fit: contain; margin: 0 0 12px; border-radius: 0; }
+  .story-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .story-top .story-logo { margin: 0; }
+  .story-top .tag { margin: 0; top: 0; }
+  /* Left column: the last story grows to the bottom, and its picture fills the space */
+  .stack { display: flex; flex-direction: column; }
+  .stack article:last-child { flex: 1; display: flex; flex-direction: column; }
+  .columns .fill { flex: 1 1 0; height: 0; min-height: 120px; aspect-ratio: auto; object-fit: cover; object-position: 50% 42%; margin: 14px 0 0; }   /* height comes from the column, not the picture */
+  .stack article + article { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+  /* News headlines: heaviest weight and the smallest optical size, so the thin strokes stay visible */
+  .head { font-family: 'Bodoni Moda', 'Bodoni 72', Didot, serif; font-variation-settings: "opsz" 6; font-weight: 800; color: var(--text); line-height: 1.1; margin: 4px 0 10px; }
+  .lead .head { font-size: clamp(1.75rem, 2.8vw, 2.5rem); margin-bottom: 14px; }
+  .lead p, .columns p { margin: 0; }
+  .lead p { font-size: 1.0625rem; line-height: 1.5; }
+  .lead .more { margin-top: 8px; font-size: 0.875rem; text-align: right; line-height: 1.3; }
+  /* Links with the little circled arrow: text colour by default, accent on hover */
+  .golink { text-decoration: none; display: inline-flex; align-items: center; gap: 7px; color: var(--text); }
+  .golink:hover, .golink:focus-visible { color: var(--accent); }
+  .go { width: 1.25em; height: 1.25em; flex: none; transition: transform .25s ease; }
+  .golink:hover .go { transform: translateX(3px); }
+  .columns .golinks { gap: 8px 20px; }
+  @media (prefers-reduced-motion: reduce) { .go { transition: none; } }
+  .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); column-gap: 0; margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+  .col { padding: 0 24px; }
+  .col:first-child { padding-left: 0; }
+  .col:last-child { padding-right: 0; }
+  .col + .col { border-left: 1px solid var(--line); }   /* column rules */
+  .columns:has(.wide) { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }   /* the story marked "wide" gets more room */
+  .wide .trio { grid-template-columns: 3fr 2fr; }
+  .wide .trio .pic:first-child { grid-column: 1; grid-row: 1 / 3; }
+  .wide .trio .pic:first-child img { aspect-ratio: auto; height: 100%; }
+  .wide .head { font-size: 1.5rem; }
+  .columns .when { display: block; }
+  .columns .head { font-size: 1.3125rem; }
+  .columns p { font-size: 0.9375rem; line-height: 1.5; }
+  .columns .links { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: 0.875rem; }
+  .columns img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; display: block; margin: 8px 0 12px; border-radius: 6px; }
+  /* Three pictures in one column: a big one on top, two small ones under it */
+  .trio { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0 12px; }
+  .trio img { margin: 0; aspect-ratio: 4 / 3; border-radius: 0; transition: transform .4s ease; }
+  .trio .pic { display: block; overflow: hidden; border-radius: 6px; }
+  .trio .pic:first-child { grid-column: 1 / -1; }
+  .trio a.pic:hover img, .trio a.pic:focus-visible img { transform: scale(1.03); }   /* only the pictures that are links react */   /* same hover as the front-page picture */
+  @media (prefers-reduced-motion: reduce) { .trio img { transition: none; } }
+  .lead .when, .columns .when { color: var(--date); font-size: 0.875rem; font-variant-numeric: tabular-nums; margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .lead .pic img { transition: none; } }
+  .earlier { margin-top: 26px; padding-top: 12px; border-top: 1px solid var(--line); }
   .earlier summary { cursor: pointer; color: var(--muted); font-size: 0.9375rem; width: fit-content; padding: 4px 0; }
   .earlier summary:hover { color: var(--accent); }
   .earlier[open] summary { margin-bottom: 4px; }
@@ -244,23 +327,58 @@
   .work .desc { font-size: 0.96875rem; margin: 0 0 10px; max-width: 38em; }
   .work .links { font-size: 0.9375rem; display: flex; gap: 18px; margin: 0; }
 
-  .photos { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-  .photos img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
+  /* Photo reel: one row that scrolls sideways */
+  .gallery { position: relative; }
+  .reel { display: flex; gap: 10px; margin: 0; padding: 0 0 12px; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: var(--line) transparent; -webkit-overflow-scrolling: touch; }
+  .reel li { flex: 0 0 auto; scroll-snap-align: start; }
+  /* Hover (or tap) a photo: it darkens and shows where and when it was taken */
+  .reel figure { position: relative; margin: 0; border-radius: 6px; overflow: hidden; }
+  .reel figcaption {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    padding: 16px; text-align: center; color: #fff; background: rgba(0,0,0,.55);
+    opacity: 0; transition: opacity .3s ease;
+  }
+  .reel figure:hover figcaption, .reel figure:focus-within figcaption, .reel li:focus figcaption { opacity: 1; }
+  .reel .place { font-family: 'Bodoni Moda', 'Bodoni 72', Didot, serif; font-variation-settings: "opsz" 11; font-weight: 600; font-size: 1.125rem; line-height: 1.2; }
+  .reel .note { font-size: 0.8125rem; line-height: 1.4; color: rgba(255,255,255,.8); max-width: 16em; }
+  @media (hover: none) {   /* touch screens: a thin strip at the bottom instead, always visible */
+    .reel figcaption { opacity: 1; inset: auto 0 0 0; padding: 22px 10px 8px; background: linear-gradient(transparent, rgba(0,0,0,.7)); align-items: flex-start; text-align: left; gap: 2px; }
+    .reel .place { font-size: 0.875rem; }
+    .reel .note { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .reel figcaption { transition: none; } }
+  .reel img { height: 260px; width: auto; display: block; }
+  .reel:focus-visible, .reel figure:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .reel-nav { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .reel-btn { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; background: none; color: var(--text); font: inherit; cursor: pointer; }
+  .reel-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .reel-btn[disabled] { opacity: .35; cursor: default; }
+  .reel-hint { margin-left: 6px; font-size: 0.8125rem; color: var(--muted); }
+  @media (hover: none) { .reel-nav .reel-btn { display: none; } .reel-hint { margin-left: 0; } }
   .after { margin: 18px 0 0; font-size: 0.9375rem; }
 
   footer { margin-top: 88px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
   @media (max-width: 860px) {
-    .page { grid-template-columns: 1fr; padding: 40px 20px 40px; row-gap: 48px; }
+    .page { grid-template-columns: minmax(0, 1fr); padding: 40px 20px 40px; row-gap: 48px; }
     .rail { position: static; }
     .rail img.portrait { width: 120px; height: 120px; }
-    .toc { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 24px !important; padding-top: 18px !important; }
+    .toc-label { margin-top: 24px; padding-top: 18px; }
+    .toc { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 6px !important; }
     .toc li { margin: 0; }
     .rows li { grid-template-columns: 1fr; padding: 9px 0; }
+    .lead .pic-wrap { float: none; width: auto; margin: 0 0 18px; }
+    .columns, .columns:has(.wide) { grid-template-columns: 1fr; row-gap: 20px; }
+    .wide .trio { grid-template-columns: 1fr 1fr; }
+    .wide .trio .pic:first-child { grid-column: 1 / -1; grid-row: auto; }
+    .wide .trio .pic:first-child img { aspect-ratio: 4 / 3; height: auto; }
+    .columns .fill { flex: none; height: auto; aspect-ratio: 16 / 10; min-height: 0; }
+    .col { padding: 0; }
+    .col + .col { border-left: 0; border-top: 1px solid var(--line); padding-top: 20px; }
     .work { grid-template-columns: 1fr; row-gap: 14px; }
     /* Narrow screens: one row of the first three photos */
-    .photos { grid-template-columns: repeat(3, 1fr); }
-    .photos img:nth-child(n+4) { display: none; }
+    .reel img { height: 200px; }
+    .reel { margin-right: -20px; padding-right: 20px; }   /* let the row run to the screen edge */
     section { margin-top: 56px; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -299,6 +417,8 @@
     .rail img.portrait { width: 140px; height: 140px; }
     .work { grid-template-columns: 170px minmax(0, 1fr); column-gap: 22px; }
     .rows li { grid-template-columns: 112px minmax(0, 1fr); column-gap: 18px; }
+    .lead .pic-wrap { width: 54%; margin-left: 24px; }
+    .col { padding: 0 16px; }
   }
   @media (max-width: 860px) {
     .contact a, .toc a { display: inline-block; padding: 6px 0; }
@@ -307,18 +427,20 @@
   }
   @media print {
     :root, :root[data-theme] { --bg: #fff; --text: #000; --muted: #444; --line: #bbb; --rose: #000; --accent: #000; --date: #333; color-scheme: light; }
-    .theme, #player, .skip, .tip, .aside, .earlier summary, .thumb::before, .thumb::after { display: none !important; }
+    .theme, #player, .skip, .tip, .aside, .earlier summary, .thumb::before, .thumb::after, .reel-nav { display: none !important; }
+    .reel { flex-wrap: wrap; overflow: visible; } .reel img { height: 150px; }
     h1, h2, .rail .name { background: none !important; color: #000 !important; -webkit-text-fill-color: #000; }
     h2::after, h2::before, h1 .dot::after { display: none; }
     .page { display: block; padding: 0; }
     .rail { position: static; margin-bottom: 24px; }
     .contact a::after { content: " (" attr(href) ")"; font-size: .85em; color: #444; }
-    section, .work { break-inside: avoid; }
+    section, .work, .lead, .col { break-inside: avoid; }
   }
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to main content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-go" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8.3"/><path d="M6.5 10h7M10.5 7l3 3-3 3"/></symbol></svg>
 <button class="theme" id="theme" type="button" aria-label="Switch to white background">
   <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></svg>
   <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2Z"/></svg>
@@ -346,6 +468,7 @@
     </ul>
 
     <nav aria-label="Page sections">
+    <p class="toc-label" aria-hidden="true">On this page</p>
     <ul class="toc" id="toc">
       <li><a href="#news">News</a></li>
       <li><a href="#education">Education</a></li>
@@ -364,18 +487,66 @@
     <p class="lede">I'm a PhD student in human-centered computing at the University of Utah, advised by <a href="https://yuejiang-nj.github.io/" target="_blank" rel="noopener">Yue Jiang<span class="sr"> (opens in a new tab)</span></a> in the <span class="has-tip"><a href="https://greatlunalab.github.io/" target="_blank" rel="noopener" aria-describedby="tip-luna">LUNA Lab<span class="sr"> (opens in a new tab)</span></a><span class="tip" id="tip-luna" aria-hidden="true">I helped design it!</span></span>. I work on XR, multimodal interaction, and interfaces for working with AI.</p>
 
     <section id="news">
-      <h2>News</h2>
-      <ul class="rows">
-        <li><time class="when" datetime="2026-10">Oct 2026</time><span>I'll be at CSCW 2026 as a student volunteer. Come find me for a coffee chat ☕️.</span></li>
-        <li><time class="when" datetime="2026-06">Jun 2026</time><span><a href="#harmonia">“Harmonia”</a> 🎹 was selected as one of the top 10 teams to present at UIST 2026. Come explore our demo in Detroit this November! </span></li>
-        <li><time class="when" datetime="2026-05">May 2026</time><span>Arrived Salt Lake City to start my PhD journey at the University of Utah. 💪</span></li>
-        <li><time class="when" datetime="2026-04">Apr 2026</time><span>Presented <a href="#mind-the-gap">“Mind the Gap”</a> at CHI 2026, organized my first CHI workshop (the 5th <a href="https://sites.google.com/view/computational-uichi26/home" target="_blank" rel="noopener">Computational UI workshop<span class="sr"> (opens in a new tab)</span></a>), and served as a student volunteer at CHI for the first time.</span></li>
-        <li><time class="when" datetime="2026-03">Mar 2026</time><span><a href="#mind-the-gap">“Mind the Gap”</a> accepted at CHI 2026.</span></li>
-        <li><time class="when" datetime="2026-01">Jan 2026</time><span>Our workshop <a href="https://sites.google.com/view/computational-uichi26/home" target="_blank" rel="noopener">“Human–AI–UI Interactions Across Modalities”<span class="sr"> (opens in a new tab)</span></a> accepted at CHI 2026.</span></li>
-      </ul>
+      <div class="masthead">
+        <h2>News</h2>
+      </div>
+
+      <!-- Front-page story: text on the left, picture on the right -->
+      <article class="lead">
+        <!-- The picture floats on the right; the text runs beside it and then on under it, like a newspaper column -->
+        <div class="pic-wrap">
+          <a class="pic" href="#harmonia" aria-label="Harmonia: see the project"><img src="news_harmonia.jpg" alt="The closing slide of the Harmonia video: the four stages of the demo, and an invitation to UIST 2026, Tuesday Nov 3, 6 to 9 pm" width="1200" height="594" loading="lazy" decoding="async"></a>
+          <p class="more"><a class="golink" href="#harmonia"><svg class="go" aria-hidden="true"><use href="#i-go"/></svg>About the project</a></p>
+        </div>
+        <img class="story-logo" src="photos/uist-2026-logo.png" alt="UIST 2026" width="1818" height="385" loading="lazy" decoding="async">
+        <p class="when">Detroit, <time datetime="2026-06">Jun 2026</time></p>
+        <h3 class="head">Harmonia is headed to UIST 2026</h3>
+        <p><a href="#harmonia">“Harmonia”</a> 🎹 was selected as one of the top 10 teams to present at UIST 2026. Please come explore our demo this November!</p>
+      </article>
+
+      <!-- Columns with rules between them (add another <article class="col"> for a third). To add a picture to a story: put <img src="…" alt="" loading="lazy"> right after the <time> line -->
+      <div class="columns">
+        <div class="col stack">
+          <article>
+            <div class="story-top">
+              <img class="story-logo" src="photos/cscw-2026-logo.png" alt="CSCW 2026" width="600" height="247" loading="lazy" decoding="async">
+              <span class="tag">New</span>
+            </div>
+            <p class="when">Salt Lake City, <time datetime="2026-10">Oct 2026</time></p>
+            <h3 class="head">See you at CSCW 2026</h3>
+            <p>I'll be there as a student volunteer. Come find me for a coffee chat ☕️</p>
+          </article>
+          <article>
+            <p class="when"><time datetime="2026-05">May 2026</time></p>
+            <h3 class="head">Hello, Salt Lake City</h3>
+            <p>Arrived to start my PhD journey at the University of Utah. 💪</p>
+            <!-- This picture stretches to fill whatever space is left in the column -->
+            <img class="fill" src="photos/slc-start.jpg" alt="A UTA bus passing under the South Campus Drive sign, snow-capped mountains behind" width="1400" height="933" loading="lazy" decoding="async" onerror="this.remove()">
+          </article>
+        </div>
+        <article class="col wide">
+          <p class="when">Barcelona, <time datetime="2026-04">Apr 2026</time></p>
+          <!-- Each picture opens the matching LinkedIn post -->
+          <div class="trio">
+            <a class="pic" href="https://lnkd.in/p/gQn9UWrM" target="_blank" rel="noopener" aria-label="Workshop recap, on LinkedIn (opens in a new tab)"><img src="photos/chi-2026-workshop.jpg" alt="Group photo of the Human–AI–UI workshop participants" width="1280" height="691" loading="lazy" decoding="async"></a>
+            <a class="pic" href="https://lnkd.in/p/g4MCic7g" target="_blank" rel="noopener" aria-label="The talk, on LinkedIn (opens in a new tab)"><img src="photos/chi-2026-talk.jpg" alt="Astrid presenting Mind the Gap at a lectern, the final slide behind her" width="1200" height="900" loading="lazy" decoding="async"></a>
+            <span class="pic"><img src="photos/chi-2026-stage.jpg" alt="The CHI 2026 student volunteers on stage in Barcelona, in red T-shirts" width="1200" height="799" loading="lazy" decoding="async"></span>
+          </div>
+          <h3 class="head">A full week at CHI 2026</h3>
+          <p>Presented our paper <a href="#mind-the-gap">“Mind the Gap”</a>, organized my first CHI workshop (the 5th <a href="https://sites.google.com/view/computational-uichi26/home" target="_blank" rel="noopener">Computational UI workshop<span class="sr"> (opens in a new tab)</span></a>), and served as a student volunteer at CHI for the first time.</p>
+          <p class="links golinks">
+            <a class="golink" href="https://lnkd.in/p/gQn9UWrM" target="_blank" rel="noopener"><svg class="go" aria-hidden="true"><use href="#i-go"/></svg>Workshop recap<span class="sr">, on LinkedIn</span><span class="sr"> (opens in a new tab)</span></a>
+            <a class="golink" href="https://lnkd.in/p/g4MCic7g" target="_blank" rel="noopener"><svg class="go" aria-hidden="true"><use href="#i-go"/></svg>The talk<span class="sr">, on LinkedIn</span><span class="sr"> (opens in a new tab)</span></a>
+            <a class="golink" href="https://lnkd.in/p/g6v_JihV" target="_blank" rel="noopener"><svg class="go" aria-hidden="true"><use href="#i-go"/></svg>Lab logo and swag<span class="sr">, on LinkedIn</span><span class="sr"> (opens in a new tab)</span></a>
+          </p>
+        </article>
+      </div>
+
       <details class="earlier">
         <summary>Earlier news</summary>
         <ul class="rows">
+          <li><time class="when" datetime="2026-03">Mar 2026</time><span><a href="#mind-the-gap">“Mind the Gap”</a> accepted at CHI 2026.</span></li>
+          <li><time class="when" datetime="2026-01">Jan 2026</time><span>Our workshop <a href="https://sites.google.com/view/computational-uichi26/home" target="_blank" rel="noopener">“Human–AI–UI Interactions Across Modalities”<span class="sr"> (opens in a new tab)</span></a> accepted at CHI 2026.</span></li>
           <li><time class="when" datetime="2025-04">Apr 2025</time><span>Heading to UIST 2025 as a student volunteer.</span></li>
           <li><time class="when" datetime="2025-04">Apr 2025</time><span>Heading to CHI 2025.</span></li>
           <li><time class="when" datetime="2025-03">Mar 2025</time><span>Presented <a href="#vr-whispering">“VR Whispering”</a> at IEEE VR 2025, and was luckily selected as a finalist in the conference photography contest 🥳.</span></li>
@@ -389,6 +560,7 @@
         <li><span class="when">2026 – now</span><span>University of Utah<span class="sub">PhD in human-centered computing. Advisor: <a href="https://yuejiang-nj.github.io/" target="_blank" rel="noopener">Yue Jiang<span class="sr"> (opens in a new tab)</span></a>, <a href="https://greatlunalab.github.io/" target="_blank" rel="noopener">LUNA Lab<span class="sr"> (opens in a new tab)</span></a> <span class="aside">I helped design it!</span></span></span></li>
         <li><span class="when">2020 – 2024</span><span>Shanghai Jiao Tong University<span class="sub">BS in Mathematics and Applied Mathematics, BEng in Industrial Design (minor)</span></span></li>
         <li><span class="when">2023</span><span>ETH Zurich and University of Zurich<span class="sub">Exchange student</span></span></li>
+        <li><span class="when">2017-2020</span><span>High School Affilicated to Shanghai Jiao Tong University</span></li>
       </ul>
       <h3>Research experience</h3>
       <ul class="rows">
@@ -463,6 +635,7 @@
         <li><time class="when" datetime="2023-12">Dec 2023</time><span>Undergraduate Merit Scholarship (Class A), Shanghai Jiao Tong University</span></li>
         <li><time class="when" datetime="2022-10">Oct 2022</time><span>Third Prize, Mathematical Modeling Contest, Shanghai Region</span></li>
         <li><time class="when" datetime="2022-05">May 2022</time><span>Honorable Mention, Interdisciplinary Contest in Modeling</span></li>
+        <li><time class="when" datetime="2020-05">Dec 2019</time><span>First Prize (Top 3), Shanghai Municipal Classical Poetry and Prose Interpretation Competition</span></li>
       </ul>
       <h3>Service</h3>
       <ul class="rows">
@@ -475,12 +648,30 @@
     <section id="beyond">
       <h2>Beyond research</h2>
       <h3 class="first">Photography</h3>
-      <div class="photos" role="group" aria-label="Five photographs from Venice">
-        <img src="creative/MEITU_20260310_083946376.jpg" alt="The domes of Santa Maria della Salute above the Grand Canal at dusk, Venice" width="2592" height="1728" loading="lazy" decoding="async">
-        <img src="creative/MEITU_20260310_084251310.jpg" alt="Two people sitting at the water's edge, the lagoon glittering in the sun" width="1728" height="2592" loading="lazy" decoding="async">
-        <img src="creative/MEITU_20260310_084632059.jpg" alt="A gondola and water taxis on the Grand Canal, lined with pastel palazzi" width="2592" height="1728" loading="lazy" decoding="async">
-        <img src="creative/MEITU_20260310_085335595.jpg" alt="Boats moored along a narrow canal between red walls and green leaves" width="1728" height="2592" loading="lazy" decoding="async">
-        <img src="creative/MEITU_20260310_085408333.jpg" alt="A small bridge over a quiet side canal, a blue-covered boat in front" width="1728" height="2592" loading="lazy" decoding="async">
+      <div class="gallery">
+        <ul class="reel" id="reel" tabindex="0" aria-label="Photographs. Scroll sideways, or use the arrow keys.">
+          <li><figure tabindex="0"><img src="photos/utah-aspens-01.jpg" alt="Golden aspens and dark pines above a still mountain lake, a small wooden dock with people on it" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Utah, Oct 2026</span><span class="note">Aspens turning in the mountains</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/utah-aspens-02.jpg" alt="Bright yellow aspens on a rocky ledge over turquoise water" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Utah, Oct 2026</span><span class="note">A hiking trail near Twin Lake</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/utah-aspens-03.jpg" alt="A hillside of yellow aspens with dark spruce trees in front" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Utah, Oct 2026</span><span class="note">Golden hour at Silver Lake</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/venice-01.jpg" alt="The domes of Santa Maria della Salute above the Grand Canal at dusk, Venice" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Venice, Mar 2026</span><span class="note">From the Accademia Bridge. A week in Italy in spring</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/lake-temple-01.jpg" alt="Rowing boats on a lake in front of a small classical temple, in autumn colours" width="1400" height="894" loading="lazy" decoding="async"><figcaption><span class="place">Rome, Mar 2026</span><span class="note">Villa Borghese</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/coast-01.jpg" alt="A green headland dropping into deep blue sea, seen from above" width="933" height="1400" loading="lazy" decoding="async"><figcaption><span class="place">Capri, Mar 2026</span><span class="note"></span>Anacapri in spring</figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/square-01.jpg" alt="People sitting on a waterfront square in the evening sun, blue flowers in front, a church tower behind" width="1400" height="1220" loading="lazy" decoding="async"><figcaption><span class="place">Stockholm, Jul 2025</span><span class="note">A solo day trip from Helsinki to Stockholm</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/venice-02.jpg" alt="Two people sitting at the water's edge, the lagoon glittering in the sun" width="933" height="1400" loading="lazy" decoding="async"><figcaption><span class="place">Venice, Mar 2026</span><span class="note"></span><span class="note">Love beneath Rialto</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/aerial-mountains-01.jpg" alt="Mountains and clouds seen from an aeroplane window" width="933" height="1400" loading="lazy" decoding="async"><figcaption><span class="place">Somewhere in the air</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/mushroom-01.jpg" alt="A red fly agaric mushroom among heather and grass" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Helsinki, 2025</span><span class="note">Outside the city</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/venice-03.jpg" alt="A gondola and water taxis on the Grand Canal, lined with pastel palazzi" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Venice, Mar 2026</span><span class="note">View on Rialto</span></figcaption></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/picnic-01.jpg" alt="Bottles and a chess set on a small table in dappled sunlight" width="1400" height="1221" loading="lazy" decoding="async"><figcaption><span class="place">Stockholm, Jul 2025</span><span class="note">Fika at Monteliusvägen</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/venice-04.jpg" alt="Boats moored along a narrow canal between red walls and green leaves" width="933" height="1400" loading="lazy" decoding="async"><figcaption><span class="place">Venice, Mar 2026</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/heather-01.jpg" alt="Purple heather in soft focus" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Helsinki, 2025</span><span class="note">Summer time outside the city</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/venice-05.jpg" alt="A small bridge over a quiet side canal, a blue-covered boat in front" width="933" height="1400" loading="lazy" decoding="async"><figcaption><span class="place">Venice, Mar 2026</span></figcaption></figure></li>
+          <li><figure tabindex="0"><img src="photos/venice-06.jpg" alt="A gondolier passing under a footbridge on a narrow canal, in warm evening light" width="1400" height="933" loading="lazy" decoding="async"><figcaption><span class="place">Venice, Mar 2026</span></figcaption></figure></li>
+</ul>
+        <div class="reel-nav">
+          <button type="button" class="reel-btn" data-dir="-1" aria-label="Previous photos">←</button>
+          <button type="button" class="reel-btn" data-dir="1" aria-label="Next photos">→</button>
+          <span class="reel-hint" aria-hidden="true">Scroll sideways</span>
+        </div>
       </div>
       <p class="after">More on Instagram at <a href="https://www.instagram.com/astridingalaxy" target="_blank" rel="noopener">@astridingalaxy<span class="sr"> (opens in a new tab)</span></a>.</p>
 
@@ -491,7 +682,6 @@
           <h4 class="title">We Are Each Other</h4>
           <p class="authors">Director, screenwriter, lyrics (adapted) · <time datetime="2024">2024</time></p>
           <p class="desc">A film about the Class of 2024 at SJTU's School of Mathematical Sciences, looking back on four years together. Set to my adaptation of the song <i><span lang="zh-Hans">和你一样</span></i>, with new lyrics and a reworked melody.</p>
-          <!-- TODO Astrid: credit the original song, e.g. change "the song 和你一样" to "the song 和你一样 (originally by NAME)" -->
         </div>
       </article>
       <article class="work">
@@ -562,7 +752,11 @@
   (function () {
     if (!('IntersectionObserver' in window)) return;
     var start = Date.now(), HOLD = 1300;
-    function play(h) { h.classList.remove('drawn'); void h.offsetWidth; h.classList.add('drawn'); }
+    function play(h) {
+      var t = h.closest('.masthead') || h; t.classList.remove('drawn'); void t.offsetWidth; t.classList.add('drawn');
+      var sec = h.closest('.masthead') && h.closest('section');   /* in News, the headlines glow too */
+      if (sec) { sec.classList.remove('lit'); void sec.offsetWidth; sec.classList.add('lit'); }
+    }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -618,6 +812,22 @@
     });
   })();
 
+  // Photo reel: arrow buttons scroll by one screenful; arrow keys work when the reel has focus.
+  (function () {
+    var reel = document.getElementById('reel'); if (!reel) return;
+    var btns = document.querySelectorAll('.reel-btn');
+    function update() {
+      var max = reel.scrollWidth - reel.clientWidth - 2;
+      btns.forEach(function (b) { b.disabled = b.dataset.dir === '-1' ? reel.scrollLeft <= 2 : reel.scrollLeft >= max; });
+    }
+    btns.forEach(function (b) { b.addEventListener('click', function () { reel.scrollBy({ left: b.dataset.dir * reel.clientWidth * 0.8, behavior: 'smooth' }); }); });
+    reel.addEventListener('scroll', update, { passive: true }); window.addEventListener('resize', update);
+    reel.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); reel.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * 300, behavior: 'smooth' }); }
+    });
+    update();
+  })();
+
   // Moving previews: short silent clips play only while on screen.
   // They start paused for visitors who ask for less motion or to save data; the pause button
   // under the sun/moon stops or restarts them all (WCAG 2.2.2), and the choice is remembered.
@@ -638,6 +848,7 @@
       });
       btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
       btn.title = paused ? 'Play moving previews' : 'Pause moving previews';
+      btn.setAttribute('aria-label', btn.title);
     }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
