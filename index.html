@@ -88,6 +88,21 @@
   .toc a { text-decoration: none; color: var(--muted); }
   .toc a:hover { color: var(--accent); }
   .toc a.current { color: var(--rose); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+  /* Round buttons top right: a small bubble to their left says what they do */
+  .theme::before, .theme::after { position: absolute; top: 50%; opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+  .theme::before {
+    content: attr(data-tip); right: calc(100% + 12px); transform: translate(4px, -50%);
+    padding: 3px 10px; border: 1px solid var(--date); border-radius: 12px; background: var(--bg); color: var(--date);
+    font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 0.8125rem; line-height: 1.4; white-space: nowrap;
+  }
+  .theme::after {   /* the little tail, pointing at the button */
+    content: ""; right: calc(100% + 9px); width: 6px; height: 6px; margin-top: -3px; transform: translateX(4px) rotate(45deg);
+    background: var(--bg); border-top: 1px solid var(--date); border-right: 1px solid var(--date);
+  }
+  .theme:hover::before, .theme:focus-visible::before { opacity: 1; transform: translate(0, -50%); }
+  .theme:hover::after, .theme:focus-visible::after { opacity: 1; transform: translateX(0) rotate(45deg); }
+  @media (hover: none) { .theme::before, .theme::after { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .theme::before, .theme::after { transition: none; } }
   /* Sun / moon switch, top right */
   .theme {
     position: fixed; top: 20px; right: 20px; z-index: 10;
@@ -441,11 +456,11 @@
 <body>
 <a class="skip" href="#main">Skip to main content</a>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-go" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8.3"/><path d="M6.5 10h7M10.5 7l3 3-3 3"/></symbol></svg>
-<button class="theme" id="theme" type="button" aria-label="Switch to white background">
+<button class="theme" id="theme" type="button" aria-label="Switch to white background" data-tip="Switch to white">
   <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7"/></svg>
   <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2Z"/></svg>
 </button>
-<button class="theme motion" id="motion" type="button" aria-pressed="false" aria-label="Pause moving previews" title="Pause moving previews" hidden>
+<button class="theme motion" id="motion" type="button" aria-pressed="false" aria-label="Pause moving previews" data-tip="Pause moving previews" hidden>
   <svg class="pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6.5v11M15 6.5v11"/></svg>
   <svg class="play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 6.8v10.4L17.2 12z"/></svg>
 </button>
@@ -708,6 +723,7 @@
     function apply(t) {
       root.setAttribute('data-theme', t);
       btn.setAttribute('aria-label', t === 'dark' ? 'Switch to white background' : 'Switch to black background');
+      btn.setAttribute('data-tip', t === 'dark' ? 'Switch to white' : 'Switch to black');
       if (meta) meta.setAttribute('content', t === 'dark' ? '#000000' : '#FFFFFF');
     }
     function saved() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
@@ -847,8 +863,8 @@
         else v.pause();
       });
       btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
-      btn.title = paused ? 'Play moving previews' : 'Pause moving previews';
-      btn.setAttribute('aria-label', btn.title);
+      var label = paused ? 'Play moving previews' : 'Pause moving previews';
+      btn.setAttribute('aria-label', label); btn.setAttribute('data-tip', label);
     }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (entries) {
